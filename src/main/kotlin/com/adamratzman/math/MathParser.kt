@@ -27,19 +27,8 @@ class MathParser(val precision: Int) {
         }
 
         if (!expression.contains("(")) {
-            var tokenized = mutableListOf<String>()
-            var start = 0
-            expression.forEachIndexed { i, char ->
-                if (char.isOperator() && (i > 0 || (i == 0 && char != '-'))) {
-                    if (i != start) tokenized.add(expression.substring(start, i))
-                    if (tokenized.last()[0].isOperator()) throw IllegalArgumentException("Invalid expression.")
-                    tokenized.add(expression[i].toString())
-                    start = i + 1
-                } else if (i == expression.lastIndex) tokenized.add(expression.substring(start))
-            }
-            (0..tokenized.lastIndex)
-                    .filter { tokenized[it].length > 1 && tokenized[it].toBigDecimalOrNull() == null }
-                    .forEach { tokenized[it] = evaluateBase(tokenized[it]).toString() }
+            var tokenized = tokenize(expression)
+
             if (tokenized.size == 1) return tokenized[0].toBigDecimalOrNull()
                     ?: throw IllegalArgumentException("${tokenized[0]} is not a valid input")
 
@@ -180,6 +169,23 @@ class MathParser(val precision: Int) {
             throw IllegalArgumentException("Hi. Why would you even try that?")
         }
         constants[name.toLowerCase()] = value
+    }
+
+    fun tokenize(expression: String): MutableList<String> {
+        val tokenized = mutableListOf<String>()
+        var start = 0
+        expression.forEachIndexed { i, char ->
+            if (char.isOperator() && (i > 0 || (i == 0 && char != '-'))) {
+                if (i != start) tokenized.add(expression.substring(start, i))
+                if (tokenized.last()[0].isOperator()) throw IllegalArgumentException("Invalid expression.")
+                tokenized.add(expression[i].toString())
+                start = i + 1
+            } else if (i == expression.lastIndex) tokenized.add(expression.substring(start))
+        }
+        (0..tokenized.lastIndex)
+                .filter { tokenized[it].length > 1 && tokenized[it].toBigDecimalOrNull() == null }
+                .forEach { tokenized[it] = evaluateBase(tokenized[it]).toString() }
+        return tokenized
     }
 }
 
