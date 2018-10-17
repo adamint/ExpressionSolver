@@ -8,7 +8,8 @@ internal class ExpressionTest {
 
     @Test
     fun evaluateFunctions() {
-        val expression = Expression("arcsin(1)")
+        val expression = Expression("8a^2 - 4")
+        expression.set("a", 9)
         println(expression.evaluate())
 
     }
