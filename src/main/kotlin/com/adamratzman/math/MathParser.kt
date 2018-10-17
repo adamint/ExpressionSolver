@@ -177,7 +177,7 @@ class MathParser(val precision: Int) {
         val tokenized = mutableListOf<String>()
         var start = 0
         expression.forEachIndexed { i, char ->
-            if (char.isOperator() && ((i > 0 && !((char == '-' || char == '+') && (Operator.values().map { it.value }.contains(expression[i - 1].toString())))) || (i == 0 && char != '-'))) {
+            if (char.isOperator() && ((i > 0 && !((char == '-' || char == '+') && (Operator.values().map { it.value }.contains(expression[i - 1].toString())))) || (i == 0 && char != '-' && char != '+'))) {
                 println(char)
                 if (i != start) tokenized.add(expression.substring(start, i))
                 val last = tokenized.last()
