@@ -171,13 +171,17 @@ class MathParser(val precision: Int) {
         constants[name.toLowerCase()] = value
     }
 
-    fun tokenize(expression: String): MutableList<String> {
+    fun tokenize(before: String): MutableList<String> {
+        val expression = before.replace("-+", "-").replace("+-", "-")
+                .replace("--", "+")
         val tokenized = mutableListOf<String>()
         var start = 0
         expression.forEachIndexed { i, char ->
-            if (char.isOperator() && (i > 0 || (i == 0 && char != '-'))) {
+            if (char.isOperator() && ((i > 0 && !((char == '-' || char == '+') && (Operator.values().map { it.value }.contains(expression[i - 1].toString())))) || (i == 0 && char != '-'))) {
+                println(char)
                 if (i != start) tokenized.add(expression.substring(start, i))
-                if (tokenized.last()[0].isOperator()) throw IllegalArgumentException("Invalid expression.")
+                val last = tokenized.last()
+                if (last[0].isOperator() && last[0] != '-' && last[0] != '+' && char != '-' && char != '+') throw IllegalArgumentException("Invalid expression.")
                 tokenized.add(expression[i].toString())
                 start = i + 1
             } else if (i == expression.lastIndex) tokenized.add(expression.substring(start))
