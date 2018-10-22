@@ -1,12 +1,38 @@
 package com.adamratzman.math
 
 import ch.obermuhlner.math.big.BigDecimalMath
+import com.adamratzman.math.expressions.Expression
 import com.adamratzman.math.expressions.Operator
 import com.adamratzman.math.expressions.isOperator
 import com.adamratzman.math.functions.MathFunction
 import com.adamratzman.math.functions.getDefaultFunctions
 import java.math.BigDecimal
 import java.math.MathContext
+import java.util.*
+
+fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        println("Run with the args: eval EXPRESSION to simply evaluate the expression, or EXPRESSION to prompt for variable declarations")
+        System.exit(1)
+    }
+    if (args[0].equals("eval", true)) println(Expression(args.toList().subList(1, args.size).joinToString(" ")).evaluate())
+    else {
+        val expression = Expression(args.joinToString(" "))
+        val scanner = Scanner(System.`in`)
+        while (true) {
+            println("Would you like to enter a variable declaration? Type the declaration or `no` to cancel (e.g. x = 4 or y = 2x)")
+            val result = scanner.nextLine()
+            if (result.equals("no", true)) break
+            val equalsIndex = result.indexOf("=")
+            if (equalsIndex == -1 || equalsIndex == result.lastIndex) println("Invalid variable declaration")
+            else {
+                expression.set(result.substring(0,equalsIndex), result.substring(equalsIndex + 1, result.length))
+                println("Successfully set.")
+            }
+        }
+        println(expression.evaluate())
+    }
+}
 
 class MathParser(val precision: Int) {
     val mathContext = MathContext(precision)
@@ -178,7 +204,6 @@ class MathParser(val precision: Int) {
         var start = 0
         expression.forEachIndexed { i, char ->
             if (char.isOperator() && ((i > 0 && !((char == '-' || char == '+') && (Operator.values().map { it.value }.contains(expression[i - 1].toString())))) || (i == 0 && char != '-' && char != '+'))) {
-                println(char)
                 if (i != start) tokenized.add(expression.substring(start, i))
                 val last = tokenized.last()
                 if (last[0].isOperator() && last[0] != '-' && last[0] != '+' && char != '-' && char != '+') throw IllegalArgumentException("Invalid expression.")
