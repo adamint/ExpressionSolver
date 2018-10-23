@@ -1,0 +1,6 @@
+{
+  "name": "ExpressionSolver",
+  "description": "This is a simple library with the express purpose of evaluating arbitrary-precision expressions with or without variables",
+  "author": "Adam Ratzman (adamint)",
+  "version": "1.0.0"
+}

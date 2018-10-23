@@ -29,7 +29,7 @@ class Expression(val input: String, val parser: MathParser = MathParser(100)) {
             }
         } catch (e: StackOverflowError) {
             e.printStackTrace()
-            throw MathException("Stackoverflow! Could $variables in $input be oscillating or nonexistant? (eg b=2x and x=4b)")
+            throw MathException("Stack overflow! Could $variables in $input be oscillating or nonexistant or is there a non-declared variable?")
         }
     }
 
